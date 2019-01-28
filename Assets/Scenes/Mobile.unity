@@ -541,7 +541,6 @@ GameObject:
   - component: {fileID: 1452488320}
   - component: {fileID: 1452488324}
   - component: {fileID: 1452488323}
-  - component: {fileID: 1452488322}
   - component: {fileID: 1452488321}
   m_Layer: 5
   m_Name: RawImage
@@ -579,18 +578,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de802f2950acd5e41b97a34d24113a20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1452488322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1452488319}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62de2b3937541404baec0ec366b95ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1452488323

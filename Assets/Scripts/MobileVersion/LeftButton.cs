@@ -8,8 +8,8 @@ public class LeftButton : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        MobileFunctionality.index--;
-        MobileFunctionality.playVideo = true;
+        Platform.index--;
+        Platform.playVideo = true;
         AudioListener.volume = 0;
     }
 }

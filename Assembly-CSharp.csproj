@@ -61,13 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CommonScripts\GraphQuery.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\Platform.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\SimpleJSON.cs" />
     <Compile Include="Assets\Scripts\MobileVersion\LeftButton.cs" />
-    <Compile Include="Assets\Scripts\MobileVersion\MobileFunctionality.cs" />
-    <Compile Include="Assets\Scripts\MobileVersion\MobileMainProgramm.cs" />
+    <Compile Include="Assets\Scripts\MobileVersion\Mobile.cs" />
     <Compile Include="Assets\Scripts\MobileVersion\RightButton.cs" />
-    <Compile Include="Assets\Scripts\TVVersion\TVFunctionality.cs" />
-    <Compile Include="Assets\Scripts\TVVersion\TVMainProgramm.cs" />
+    <Compile Include="Assets\Scripts\TVVersion\TV.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/MiAir/Documents/slider/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
