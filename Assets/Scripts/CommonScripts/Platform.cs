@@ -222,7 +222,7 @@ public class Platform : MonoBehaviour
     IEnumerator PlayVideo()
     {
         AudioListener.volume = 1;
-        videoPlayer.playOnAwake = true;
+        videoPlayer.playOnAwake = false;
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = Application.persistentDataPath + nameMedias[index] + ".mp4";
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
