@@ -282,3 +282,5 @@ C:\Users\MiAir\Documents\slider\obj\Debug\Assembly-CSharp.csproj.CoreCompileInpu
 C:\Users\MiAir\Documents\slider\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\MiAir\Documents\slider\obj\Debug\Assembly-CSharp.dll
 C:\Users\MiAir\Documents\slider\obj\Debug\Assembly-CSharp.pdb
+C:\Users\MiAir\Documents\slider\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.dll
+C:\Users\MiAir\Documents\slider\Temp\bin\Debug\UnityEngine.SpatialTrackingModule.xml

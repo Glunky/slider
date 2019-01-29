@@ -8,9 +8,12 @@ using System.IO;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Video;
+using System;
 
 public class Platform : MonoBehaviour
-{ 
+{
+
+    Text text;
 
     Vector2 startTouchPosition, endTouchPosition;
 
@@ -20,6 +23,8 @@ public class Platform : MonoBehaviour
 
     protected string queryDetails;
     string[] HTTP;
+    string[] nameMedias;
+    string[] typeMedias;
     WWW[] web;
     Texture2D[] texture;
     int[] waitingTime;
@@ -35,20 +40,25 @@ public class Platform : MonoBehaviour
 
     private void Awake()
     {
+        text = (Text)FindObjectOfType(typeof(Text));
+        text.enabled = false;
         videoPlayer = gameObject.AddComponent<VideoPlayer>();
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    protected void initServer(string URL) {
+    protected void initServer(string URL)
+    {
         GraphQuery.url = URL;
         imagesIsDownloaded = false;
         updateIsDone = false;
     }
-    protected void initMonitor(int ID) {
+    protected void initMonitor(int ID)
+    {
         monitor = ID;
         queryDetails = queryDetails.Replace("$", ID.ToString());
     }
-    protected void getDataFromServer() {
+    protected void getDataFromServer()
+    {
         GraphQuery.onQueryComplete += getResult;
         GraphQuery.POST(queryDetails);
     }
@@ -60,12 +70,16 @@ public class Platform : MonoBehaviour
         HTTP = new string[countMedias];
         web = new WWW[countMedias];
         texture = new Texture2D[countMedias];
+        typeMedias = new string[countMedias];
         waitingTime = new int[countMedias];
+        nameMedias = new string[countMedias];
         for (int i = 0; i < countMedias; i++)
         {
             string name = N["data"]["monitor"]["medias"][i]["url_file"].Value;
             HTTP[i] = "http://192.168.0.84" + name; // заполняем массив http ссылками
             waitingTime[i] = int.Parse(N["data"]["monitor"]["medias"][i]["length"].Value); // заполняем массив временем показа картинок
+            typeMedias[i] = N["data"]["monitor"]["medias"][i]["type"].Value;
+            nameMedias[i] = N["data"]["monitor"]["medias"][i]["name"].Value;
         }
         OnDisable();
     }
@@ -77,45 +91,25 @@ public class Platform : MonoBehaviour
 
     protected IEnumerator downloadMedias()
     {
+        text.enabled = true;
+            
         for (int i = 0; i < web.Length; i++)
         {
-            // пока не разберёмся с сортировкой картинок и видео, запись не буду делать
-            //запись на комп
-            /*if (File.Exists(Application.persistentDataPath + "_" + i.ToString() + "_" + "testTexture.png"))
-            {
-                Debug.Log("load" + Application.persistentDataPath);
-                byte[] byteArray = File.ReadAllBytes(Application.persistentDataPath + "_" + i.ToString() + "_" + "testTexture.png");
-                texture[i] = new Texture2D(8, 8);
-                texture[i].filterMode = FilterMode.Trilinear; // настройки для улучшения качетва изображения
-                texture[i].anisoLevel = 16; // тоже настройка
-                texture[i].LoadImage(byteArray);
-            }*/
 
-            //else
-            //{
-            Debug.Log("download");
+            text.text = "Downoading: " + (i + 1).ToString() + "/" + web.Length;
             web[i] = new WWW(HTTP[i]);
             yield return web[i];
-            if (HTTP[i].Contains(".mp4"))
-            {
-                File.WriteAllBytes(Application.persistentDataPath + "_" + i.ToString() + "_" + "video.mp4", web[i].bytes);
-                continue;
-            }
-            texture[i] = web[i].texture;
-            if (texture[i] != null)
-            {
-                texture[i].filterMode = FilterMode.Trilinear;
-                texture[i].anisoLevel = 16;
-            }
-            byte[] bytes = texture[i].EncodeToPNG();
-            if (bytes != null)
-            {
-                if (HTTP[i].Contains(".jpg") || HTTP[i].Contains(".JPG"))
-                    File.WriteAllBytes(Application.persistentDataPath + "_" + i.ToString() + "_" + "testTexture.png", bytes);
+            if (typeMedias[i] == "video")
+                File.WriteAllBytes(Application.persistentDataPath + nameMedias[i] + ".mp4", web[i].bytes);
 
-            }
-            //}   
+
+            else if (typeMedias[i] == "image")
+                texture[i] = web[i].texture;
+
+
         }
+
+        text.enabled = false;
         imagesIsDownloaded = true;
         //updateIsDone = true;
     }
@@ -124,18 +118,16 @@ public class Platform : MonoBehaviour
     IEnumerator showTextureThroughTime(int waitTime)
     {
         // это для видео (вызывается сопрограмма Play())
-        if (HTTP[index].Contains(".mp4"))
+        if (typeMedias[index] == "video")
         {
-
             if (playVideo) StartCoroutine(PlayVideo());
             playVideo = false;
         }
 
         // это для картинок, просто присваиваем текстуру
-        else if ((HTTP[index].Contains(".jpg") || HTTP[index].Contains(".JPG")) && texture[index] != null)
-        {
+        else if (typeMedias[index] == "image" && texture[index] != null)
             GetComponent<RawImage>().texture = texture[index];
-        }
+        
 
         flag = false;
         yield return new WaitForSeconds(waitTime);
@@ -172,13 +164,13 @@ public class Platform : MonoBehaviour
         else if (index < 0)
             index = web.Length - 1;
 
-        if (HTTP[index].Contains(".mp4"))
+        if (typeMedias[index] == "video")
         {
             if (playVideo) StartCoroutine(PlayVideo());
             playVideo = false;
         }
 
-        else if ((HTTP[index].Contains(".jpg") || HTTP[index].Contains(".JPG")) && texture[index] != null)
+        else if (typeMedias[index] == "image"&& texture[index] != null)
             GetComponent<RawImage>().texture = texture[index];
 
 
@@ -198,12 +190,14 @@ public class Platform : MonoBehaviour
                 StartCoroutine(showTextureThroughTime(waitTime));
             }
         }
+        
     }
 
     protected void showMediasUsingTouches()
     {
             if (imagesIsDownloaded)
                 showTextureWithTouches();
+        
     }
 
     protected IEnumerator updateContent(int repeatTime)
@@ -214,7 +208,7 @@ public class Platform : MonoBehaviour
             Debug.Log("Start delete");
             for (int i = 0; i < web.Length; i++)
             {
-                File.Delete(Application.persistentDataPath + "_" + i.ToString() + "_" + "testTexture.png");
+                File.Delete(Application.persistentDataPath + nameMedias[index] + ".mp4");
             }
 
             //initServer("http://192.168.0.84/control/graphql.php");
@@ -230,15 +224,13 @@ public class Platform : MonoBehaviour
         AudioListener.volume = 1;
         videoPlayer.playOnAwake = true;
         videoPlayer.source = VideoSource.Url;
-        videoPlayer.url = Application.persistentDataPath + "_" + index.ToString() + "_" + "video.mp4";
+        videoPlayer.url = Application.persistentDataPath + nameMedias[index] + ".mp4";
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
 
-        //Assign the Audio from Video to AudioSource to be played
         videoPlayer.EnableAudioTrack(0, true);
         videoPlayer.SetTargetAudioSource(0, audioSource);
         videoPlayer.Prepare();
 
-        //Wait until video is prepared
         while (!videoPlayer.isPrepared)
         {
             yield return null;

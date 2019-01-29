@@ -12,7 +12,7 @@ public class TV : Platform
         initServer("http://192.168.0.84/control/graphql.php");
         initMonitor(9);
         getDataFromServer();
-        yield return new WaitForSeconds(Platform.TimeNeedForResponse);
+        yield return new WaitForSeconds(3);
         yield return downloadMedias();
         //server.StartCoroutine(server.updateContent(40));
 

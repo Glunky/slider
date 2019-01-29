@@ -1,0 +1,4 @@
+#Tue Jan 29 15:58:14 MSK 2019
+base.0=C\:\\Users\\MiAir\\Documents\\slider\\Temp\\gradleOut\\build\\intermediates\\transforms\\dexMerger\\release\\0
+path.0=classes.dex
+renamed.0=classes.dex

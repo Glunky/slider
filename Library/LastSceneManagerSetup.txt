@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/TV.unity
+- path: Assets/Scenes/Mobile.unity
   isLoaded: 1
   isActive: 1
