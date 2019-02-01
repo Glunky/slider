@@ -13,30 +13,33 @@ using System;
 public class Platform : MonoBehaviour
 {
 
-    Text text;
+    Text text; // для текста
 
-    Vector2 startTouchPosition, endTouchPosition;
+    Vector2 startTouchPosition, endTouchPosition; // для скролов слайдов
 
+    // для отображения видеофайлов
     protected VideoPlayer videoPlayer;
     VideoSource videoSource;
     protected AudioSource audioSource;
 
+    // запрос - изменять в основной программе
     protected string queryDetails;
-    string[] HTTP;
-    string[] nameMedias;
-    string[] typeMedias;
-    WWW[] web;
-    Texture2D[] texture;
-    int[] waitingTime;
 
-    int monitor;
-    public static int index = 0;
-    protected const int TimeNeedForResponse = 5;
+    string[] HTTP; //http ссылками в виде строки
+    string[] nameMedias; // название медиафайла
+    string[] typeMedias; //тип медиафайла - image или video
+    WWW[] web; // WWW класс используем для скачивания медиафайлов
+    Texture2D[] texture; // массив текстур, получившихся из скачанных изображений
+    int[] waitingTime; // через сколько времени сменить слайд
 
-    bool flag = true;
-    bool imagesIsDownloaded;
-    bool updateIsDone;
-    public static bool playVideo = true;
+    int monitor; // ID монитора
+    public static int index = 0; // нужная штука, не трогать
+    protected const int TimeNeedForResponse = 5; //время, нужное на ответ от сервера. Если вылезает исключение - ставим больше
+
+    bool flag = true; // костыль - не трогать
+    bool imagesIsDownloaded; //не показывать изображения, пока все не скачались
+    bool updateIsDone; //не показывать изображения, пока происходит обновление медиафайлов
+    public static bool playVideo = true; // для корректного отображения видео
 
     private void Awake()
     {
@@ -46,22 +49,30 @@ public class Platform : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
+    // инициализируем сервер
     protected void initServer(string URL)
     {
         GraphQuery.url = URL;
         imagesIsDownloaded = false;
         updateIsDone = false;
     }
+
+    //инициализируем монитор
     protected void initMonitor(int ID)
     {
         monitor = ID;
         queryDetails = queryDetails.Replace("$", ID.ToString());
     }
+
+    // получаем данные с сервера
     protected void getDataFromServer()
     {
         GraphQuery.onQueryComplete += getResult;
         GraphQuery.POST(queryDetails);
     }
+    
+    // в переменной queryReturn содержится ответ от сервера в JSON формате
+    // парсим его и получаем данные, которые запросили
     protected void getResult()
     {
         Debug.Log(GraphQuery.queryReturn);
@@ -89,32 +100,27 @@ public class Platform : MonoBehaviour
         GraphQuery.onQueryComplete -= getResult;
     }
 
+    //ответ от сервера пришёл, теперь скачиваем медиафайлы
     protected IEnumerator downloadMedias()
     {
-        text.enabled = true;
-            
+        text.enabled = true; 
         for (int i = 0; i < web.Length; i++)
         {
-
             text.text = "Downoading: " + (i + 1).ToString() + "/" + web.Length;
             web[i] = new WWW(HTTP[i]);
             yield return web[i];
             if (typeMedias[i] == "video")
                 File.WriteAllBytes(Application.persistentDataPath + nameMedias[i] + ".mp4", web[i].bytes);
 
-
             else if (typeMedias[i] == "image")
                 texture[i] = web[i].texture;
-
-
         }
-
         text.enabled = false;
         imagesIsDownloaded = true;
         //updateIsDone = true;
     }
 
-    //придумать норм название
+    //отобразить файл на экране ( версия для TV)
     IEnumerator showTextureThroughTime(int waitTime)
     {
         // это для видео (вызывается сопрограмма Play())
@@ -144,9 +150,9 @@ public class Platform : MonoBehaviour
         flag = true;
     }
 
+    // отобразить файл (версия для мобильных устройств)
     void showTextureWithTouches()
     {
-
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             startTouchPosition = Input.GetTouch(0).position;
 
@@ -181,6 +187,8 @@ public class Platform : MonoBehaviour
         }*/
     }
 
+    // основная функция для отображения на TV, её и вставляем  в Update
+    //имеет проверки, чтобы не отображались null из массивов (исключения не вылезут)
     protected void showMediasUsingTime(int waitTime)
     {
         if (imagesIsDownloaded)
@@ -192,33 +200,38 @@ public class Platform : MonoBehaviour
         }
         
     }
-
+    // основная функция для отображения на Mobile, её и вставляем  в Update
+    //имеет проверки, чтобы не отображались null из массивов (исключения не вылезут)
     protected void showMediasUsingTouches()
     {
             if (imagesIsDownloaded)
                 showTextureWithTouches();
-        
     }
 
+    // обновляем контент - удаляем старые файлы и скачиваем новые
     protected IEnumerator updateContent(int repeatTime)
     {
+        text.enabled = true;
         for (; ; )
         {
             yield return new WaitForSeconds(repeatTime);
-            Debug.Log("Start delete");
+            text.text = "Please wait, content is updating";
             for (int i = 0; i < web.Length; i++)
             {
-                File.Delete(Application.persistentDataPath + nameMedias[index] + ".mp4");
+                if(typeMedias[i] == "video")
+                    File.Delete(Application.persistentDataPath + nameMedias[i] + ".mp4");
             }
-
+            text.enabled = false;
             //initServer("http://192.168.0.84/control/graphql.php");
             initMonitor(monitor);
             getDataFromServer();
             yield return new WaitForSeconds(TimeNeedForResponse);
             yield return downloadMedias();
         }
+        
     }
 
+    //включить видео
     IEnumerator PlayVideo()
     {
         AudioListener.volume = 1;
