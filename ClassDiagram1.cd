@@ -1,25 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Platform">
-    <Position X="4.5" Y="0.5" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
+    <Position X="5.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EEgAAAAAoAAAAAAACMABAAQ0gAAAVogMgABAgYABAEA=</HashCode>
+      <HashCode>EEgAAAAAoAAAAAAACMABAAQ0gAAAVogMgAAAgYABAEA=</HashCode>
       <FileName>Assets\Scripts\CommonScripts\Platform.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Mobile" Collapsed="true">
-    <Position X="1.75" Y="2.75" Width="1.5" />
+    <Position X="3.25" Y="8.25" Width="1.5" />
+    <InheritanceLine Type="Platform" ManuallyRouted="true">
+      <Path>
+        <Point X="6.875" Y="7.954" />
+        <Point X="6.875" Y="8.136" />
+        <Point X="4" Y="8.136" />
+        <Point X="4" Y="8.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\MobileVersion\Mobile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="TV" Collapsed="true">
-    <Position X="8" Y="2.75" Width="1.5" />
+    <Position X="8.5" Y="8.25" Width="1.5" />
+    <InheritanceLine Type="Platform" ManuallyRouted="true">
+      <Path>
+        <Point X="6.875" Y="7.954" />
+        <Point X="6.875" Y="8.146" />
+        <Point X="9.25" Y="8.146" />
+        <Point X="9.25" Y="8.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Assets\Scripts\TVVersion\TV.cs</FileName>
