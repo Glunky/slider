@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Video;
 using System;
 
-public class Platform : MonoBehaviour
+public abstract class Platform : MonoBehaviour
 {
     //много глобальных - в будущем переделать
     Text text; 
@@ -84,11 +84,12 @@ public class Platform : MonoBehaviour
         for (int i = 0; i < countMedias; i++)
         {
             string name = N["data"]["monitor"]["medias"][i]["url_file"].Value;
-            HTTP[i] = "http://192.168.0.84" + name; 
+            HTTP[i] = "http://minos84.ru" + name; 
             waitingTime[i] = int.Parse(N["data"]["monitor"]["medias"][i]["length"].Value); 
             typeMedias[i] = N["data"]["monitor"]["medias"][i]["type"].Value;
             nameMedias[i] = N["data"]["monitor"]["medias"][i]["name"].Value;
         }
+        Debug.Log(Application.persistentDataPath);
         OnDisable();
     }
 
@@ -107,7 +108,7 @@ public class Platform : MonoBehaviour
             web[i] = new WWW(HTTP[i]);
             yield return web[i];
             if (typeMedias[i] == "video")
-                File.WriteAllBytes(Application.persistentDataPath + nameMedias[i] + ".mp4", web[i].bytes);
+                File.WriteAllBytes("E:/Test/" + nameMedias[i] + ".mp4", web[i].bytes);
 
             else if (typeMedias[i] == "image")
                 texture[i] = web[i].texture;
@@ -172,7 +173,7 @@ public class Platform : MonoBehaviour
             playVideo = false;
         }
 
-        else if (typeMedias[index] == "image"&& texture[index] != null)
+        else if (typeMedias[index] == "image" && texture[index] != null)
             GetComponent<RawImage>().texture = texture[index];
 
 
@@ -210,11 +211,11 @@ public class Platform : MonoBehaviour
             text.text = "Please wait, content is updating";
             for (int i = 0; i < web.Length; i++)
             {
-                if(typeMedias[i] == "video")
-                    File.Delete(Application.persistentDataPath + nameMedias[i] + ".mp4");
+                if(typeMedias[i] == "video") { }
+                   // File.Delete(Application.persistentDataPath + nameMedias[i] + ".mp4");
             }
             text.enabled = false;
-            initServer("http://192.168.0.84/control/graphql.php");
+            initServer("http://minos84.ru/control/graphql.php");
             //initMonitor(monitor);
             getDataFromServer();
             yield return new WaitForSeconds(TimeNeedForResponse);
@@ -224,19 +225,46 @@ public class Platform : MonoBehaviour
 
     IEnumerator PlayVideo()
     {
-        AudioListener.volume = 1;
+        /*AudioListener.volume = 1;
         videoPlayer.playOnAwake = false;
         videoPlayer.source = VideoSource.Url;
-        videoPlayer.url = Application.persistentDataPath + nameMedias[index] + ".mp4";
+        videoPlayer.url = "/home/platform/" + nameMedias[index] + ".webm";
+            //HTTP[index];
+            //Application.persistentDataPath + nameMedias[index] + ".mp4";
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
         videoPlayer.EnableAudioTrack(0, true);
         videoPlayer.SetTargetAudioSource(0, audioSource);
         videoPlayer.Prepare();
+        //text.enabled = true;
+        //text.text = "Please, wait. Video file is downloading";
 
         while (!videoPlayer.isPrepared)
         {
             yield return null;
         }
+        //text.enabled = false;
+
+        GetComponent<RawImage>().texture = videoPlayer.texture;
+        videoPlayer.Play();
+        audioSource.Play();*/
+
+
+
+        videoPlayer.playOnAwake = false;
+        videoPlayer.source = VideoSource.Url;
+        videoPlayer.url = "E:/Test/" + nameMedias[index] + ".mp4";
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+        videoPlayer.EnableAudioTrack(0, true);
+        videoPlayer.SetTargetAudioSource(0, audioSource);
+        videoPlayer.Prepare();
+        //text.text = videoPlayer.url;
+
+        while (!videoPlayer.isPrepared)
+        {
+            yield return null;
+        }
+
+        //File.WriteAllBytes("/home/platform/video.ogv",);
 
         GetComponent<RawImage>().texture = videoPlayer.texture;
         videoPlayer.Play();
