@@ -60,6 +60,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scenes\newScripts\LeftButtonScript.cs" />
+    <Compile Include="Assets\Scenes\newScripts\manager.cs" />
+    <Compile Include="Assets\Scenes\newScripts\Mediafile.cs" />
+    <Compile Include="Assets\Scenes\newScripts\RightButtonScript.cs" />
     <Compile Include="Assets\Scenes\Test.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\GraphQuery.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\Platform.cs" />
